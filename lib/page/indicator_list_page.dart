@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../vo/indicator_vo.dart';
-import '../util/utils.dart';
-import 'indicator_page.dart';
+import 'package:hermes_fe/vo/indicator_vo.dart';
+import 'package:hermes_fe/util/utils.dart';
+import 'package:hermes_fe/page/indicator_page.dart';
 
 class IndicatorListPage extends StatelessWidget {
   IndicatorListPage(

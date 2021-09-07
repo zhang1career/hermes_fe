@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'vo/indicator_vo.dart';
-import 'page/indicator_list_page.dart';
-import 'service/indicator_service.dart';
+import 'package:hermes_fe/vo/indicator_vo.dart';
+import 'package:hermes_fe/page/indicator_list_page.dart';
+import 'package:hermes_fe/service/indicator_service.dart';
 
 void main() {
   runApp(MyApp());
