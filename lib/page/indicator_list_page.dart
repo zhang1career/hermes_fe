@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:hermes_fe/vo/indicator_vo.dart';
-import 'package:hermes_fe/util/utils.dart';
 import 'package:hermes_fe/page/indicator_page.dart';
+import 'package:hermes_fe/service/indicator_service.dart';
+import 'package:hermes_fe/vo/indicator_vo_lite.dart';
 
 class IndicatorListPage extends StatelessWidget {
   IndicatorListPage(
-      {Key? key, required this.title, required this.indicatorVoList})
+      {Key? key, required this.title, required this.data})
       : super(key: key);
 
   final String title;
-  final Future<List<IndicatorVo>> indicatorVoList;
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
+    Future<List<IndicatorVoLite>> indicatorVoLiteList = data['indicator_list'];
+
     return Scaffold(
         appBar: AppBar(
           title: Text(title),
         ),
         body: Center(
-            child: FutureBuilder<List<IndicatorVo>>(
-                future: this.indicatorVoList,
+            child: FutureBuilder<List<IndicatorVoLite>>(
+                future: indicatorVoLiteList,
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
@@ -34,7 +36,7 @@ class IndicatorListPage extends StatelessWidget {
                 })));
   }
 
-  Widget _buildListView(List<IndicatorVo>? indicatorVoList) {
+  Widget _buildListView(List<IndicatorVoLite>? indicatorVoList) {
     return ListView.builder(
       itemCount: indicatorVoList!.length,
       itemBuilder: (context, index) {
@@ -46,7 +48,7 @@ class IndicatorListPage extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => IndicatorPage(),
                 settings: RouteSettings(
-                  arguments: indicatorVoList[index],
+                  arguments: IndicatorPage.prepare(indicatorVoList[index].id),
                 ),
               ),
             );
@@ -56,70 +58,9 @@ class IndicatorListPage extends StatelessWidget {
     );
   }
 
-  Widget _buildGridView(
-      BuildContext context, List<IndicatorVo>? indicatorVoList) {
-    return GridView.count(
-      primary: false,
-      padding: const EdgeInsets.all(1.5),
-      crossAxisCount: determineCrossAxisCount(context),
-      childAspectRatio: 1.2,
-      mainAxisSpacing: 1.0,
-      crossAxisSpacing: 1.0,
-      children: _prepareIndicatorInfoCards(indicatorVoList),
-      //new Cards()
-      shrinkWrap: true,
-    );
-  }
-
-  List<Widget> _prepareIndicatorInfoCards(List<IndicatorVo>? indicatorVoList) {
-    List<Widget> indicatorInfoCells = [];
-    // we can call the rest service here?
-    for (IndicatorVo indicatorVo in indicatorVoList!) {
-      indicatorInfoCells.add(_getIndicatorInfoCard(indicatorVo));
-    }
-
-    return indicatorInfoCells;
-  }
-
-  Container _getIndicatorInfoCard(IndicatorVo indicatorVo) {
-    return new Container(
-        width: 200.0,
-        height: 300.0,
-        child: Card(
-          elevation: 2.0,
-          color: _getColorByAstLevel(indicatorVo),
-          child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              verticalDirection: VerticalDirection.down,
-              children: _prepareStatusText(indicatorVo)),
-        ));
-  }
-
-  List<Widget> _prepareStatusText(IndicatorVo indicatorVo) {
-    final TextStyle textStyle =
-        TextStyle(fontWeight: FontWeight.bold, height: 3);
-    return <Widget>[
-      new Center(
-        child: new Text(indicatorVo.name.toUpperCase(), style: textStyle),
-      ),
-      new Center(
-        child: _createAst(indicatorVo),
-      ),
-    ];
-  }
-
-  Widget? _createAst(IndicatorVo indicatorVo) {
-    final TextStyle textStyle =
-        TextStyle(fontWeight: FontWeight.bold, height: 3);
-    return new Text(indicatorVo.expression, style: textStyle);
-  }
-
-  Color? _getColorByAstLevel(IndicatorVo indicatorVo) {
-    if (indicatorVo.isLeaf()) {
-      return Colors.teal[600];
-    } else {
-      return Colors.red[200];
-    }
+  static Map<String, dynamic> prepare() {
+    Map<String, dynamic> ret = new Map();
+    ret['indicator_list'] = fetchIndicatorList();
+    return ret;
   }
 }

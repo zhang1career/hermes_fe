@@ -1,10 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-
-import 'package:hermes_fe/vo/indicator_vo.dart';
 import 'package:hermes_fe/page/indicator_list_page.dart';
-import 'package:hermes_fe/service/indicator_service.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,13 +13,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
-  late Future<List<IndicatorVo>> futureData;
+  late Map<String, dynamic> data;
 
   @override
   void initState() {
     super.initState();
-    futureData = fetchIndicatorList();
+    data = IndicatorListPage.prepare();
   }
 
   @override
@@ -35,7 +29,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: IndicatorListPage(title: "Hermes, an indicator Engine", indicatorVoList: futureData),
+      home: IndicatorListPage(title: "Hermes, an indicator Engine", data: data),
     );
   }
 }
